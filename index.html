@@ -271,6 +271,7 @@
             transform: scale(0.95);
         }
 
+        .icon-phone { background: linear-gradient(135deg, #34c759, #28a745); }
         .icon-facetime { background: linear-gradient(135deg, #34c759, #28a745); }
         .icon-calendar { background: #ffffff; color: #000; flex-direction: column; justify-content: flex-start; }
         .icon-photos { background: linear-gradient(135deg, #fff, #eee); }
@@ -285,8 +286,6 @@
         .icon-books { background: linear-gradient(135deg, #ff9500, #ffcc00); }
         .icon-appstore { background: linear-gradient(135deg, #007aff, #5ac8fa); }
         .icon-podcasts { background: linear-gradient(135deg, #af52de, #5856d6); }
-        .icon-health { background: #ffffff; }
-        .icon-home { background: linear-gradient(135deg, #ff9500, #ff3b30); }
         .icon-safari { background: linear-gradient(135deg, #007aff, #5ac8fa); }
         .icon-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
 
@@ -349,6 +348,117 @@
             opacity: 1;
         }
 
+        /* 전화 수신 팝업 (10초 후 등장) */
+        #incoming-call-popup {
+            position: absolute;
+            top: -120px;
+            left: 15px;
+            right: 15px;
+            background: rgba(40, 40, 40, 0.85);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 15px 20px;
+            color: white;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #incoming-call-popup.active {
+            top: 55px;
+        }
+        .call-popup-info h4 {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        .call-popup-info p {
+            font-size: 12px;
+            color: #aaa;
+        }
+        .call-popup-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .call-btn-small {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-reject { background: #ff3b30; }
+        .btn-accept { background: #34c759; }
+
+        /* 전화 통화 화면 */
+        #active-call-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2c3e50 0%, #111 100%);
+            color: white;
+            z-index: 2500;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 80px 20px 60px 20px;
+            transform: translateY(100%);
+            transition: transform 0.4s ease-in-out;
+        }
+        #active-call-screen.active {
+            display: flex;
+            transform: translateY(0);
+        }
+        .call-profile-area {
+            text-align: center;
+        }
+        .call-avatar-big {
+            width: 90px;
+            height: 90px;
+            background: #444;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            margin: 0 auto 20px auto;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .call-profile-area h2 {
+            font-size: 26px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .call-profile-area p {
+            font-size: 14px;
+            color: #aaa;
+        }
+        .end-call-btn {
+            width: 70px;
+            height: 70px;
+            background: #ff3b30;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
+        }
+
         /* 4. 앱 내부 화면 공통 */
         .app-view {
             position: absolute;
@@ -387,7 +497,41 @@
             cursor: pointer;
         }
 
-        /* 인스타그램 프로필 화면 (참고 사진 3 스타일 반영) */
+        /* 전화 앱 스타일 */
+        #phone-app {
+            background: #000;
+            color: #fff;
+            padding: 45px 0 0 0;
+        }
+        .phone-nav-header {
+            padding: 15px 20px;
+            font-size: 24px;
+            font-weight: bold;
+            border-bottom: 1px solid #222;
+        }
+        .phone-contact-list {
+            padding: 15px 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #1a1a1a;
+            cursor: pointer;
+        }
+        .contact-info h4 {
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+        .contact-info p {
+            font-size: 13px;
+            color: #888;
+        }
+
+        /* 인스타그램 프로필 화면 */
         #insta-app {
             background: #000;
             color: #fff;
@@ -507,7 +651,7 @@
             font-size: 20px;
         }
 
-        /* 인스타그램 DM 리스트 화면 (참고 사진 4 스타일) */
+        /* 인스타그램 DM 리스트 화면 */
         #insta-dm-list {
             position: absolute;
             top: 0;
@@ -637,62 +781,6 @@
             align-self: flex-end;
         }
 
-        /* 기타 앱 (메시지, 메모, 캘린더, 사파리) 스타일 유지 */
-        .chat-list-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #1f1f1f;
-            cursor: pointer;
-            gap: 15px;
-        }
-        .chat-avatar {
-            width: 45px;
-            height: 45px;
-            background: #333;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 20px;
-        }
-        .chat-info h4 {
-            font-size: 15px;
-            margin-bottom: 4px;
-        }
-        .chat-info p {
-            font-size: 13px;
-            color: #888;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 210px;
-        }
-        .chat-room {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: #121212;
-            padding: 50px 20px 30px 20px;
-            z-index: 25;
-        }
-        .chat-room.active {
-            display: flex;
-        }
-        .memo-content {
-            background: #1e1e1e;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #ddd;
-            flex-grow: 1;
-        }
-
         /* 사파리 브라우저 앱 */
         #safari-app {
             background: #ffffff;
@@ -771,7 +859,38 @@
 <body>
 
     <div class="phone-frame">
-        <!-- 앱 실행 시 스플래시 & 블러 효과 -->
+        <!-- 음성 재생용 유튜브 플레이어 컨테이너 -->
+        <div id="audio-container" style="display:none;"></div>
+
+        <!-- 10초 후 상단 전화 수신 팝업 -->
+        <div id="incoming-call-popup">
+            <div class="call-popup-info">
+                <h4>긴토키</h4>
+                <p>휴대전화 통화...</p>
+            </div>
+            <div class="call-popup-btns">
+                <button class="call-btn-small btn-reject" onclick="rejectCall()">✕</button>
+                <button class="call-btn-small btn-accept" onclick="acceptCall()">📞</button>
+            </div>
+        </div>
+
+        <!-- 전화 통화 화면 -->
+        <div id="active-call-screen">
+            <div class="status-bar dark" style="width:100%;">
+                <span>10:05</span>
+                <span>5G 🔋 82%</span>
+            </div>
+            <div class="call-profile-area">
+                <div class="call-avatar-big">⚔️</div>
+                <h2>긴토키</h2>
+                <p id="call-timer-text">통화 중...</p>
+            </div>
+            <div style="margin-bottom: 40px;">
+                <button class="end-call-btn" onclick="endCall()">📞</button>
+            </div>
+        </div>
+
+        <!-- 앱 실행 스플래시 & 블러 -->
         <div id="splash-screen">
             <div class="splash-icon" id="splash-icon-box"></div>
         </div>
@@ -838,9 +957,10 @@
             </div>
 
             <div class="app-grid">
-                <div class="app-icon" onclick="alert('FaceTime 실행')">
-                    <div class="icon-box icon-facetime"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg></div>
-                    <span>FaceTime</span>
+                <!-- 전화 앱 아이콘 추가 -->
+                <div class="app-icon" onclick="launchAppWithSplash('phone-app', 'icon-phone', '전화')">
+                    <div class="icon-box icon-phone"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div>
+                    <span>전화</span>
                 </div>
                 <div class="app-icon" onclick="launchAppWithSplash('calendar-app', 'icon-calendar', '캘린더')">
                     <div class="icon-box icon-calendar">
@@ -900,18 +1020,13 @@
                     <div class="icon-box icon-podcasts"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5z"/></svg></div>
                     <span>팟캐스트</span>
                 </div>
-                <div class="app-icon" onclick="alert('건강 앱')">
-                    <div class="icon-box icon-health"><svg width="28" height="28" viewBox="0 0 24 24" fill="#ff2d55"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
-                    <span>건강</span>
-                </div>
-                <div class="app-icon" onclick="alert('홈 앱')">
-                    <div class="icon-box icon-home"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
-                    <span>홈</span>
-                </div>
             </div>
 
             <!-- 하단 독 바 -->
             <div class="dock-bar">
+                <div class="icon-box icon-phone" onclick="launchAppWithSplash('phone-app', 'icon-phone', '전화')">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                </div>
                 <div class="icon-box icon-messages" onclick="launchAppWithSplash('chat-app', 'icon-messages', '메시지')">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
                 </div>
@@ -921,8 +1036,38 @@
                 <div class="icon-box icon-insta" onclick="launchAppWithSplash('insta-app', 'icon-insta', 'Instagram')">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/></svg>
                 </div>
-                <div class="icon-box icon-podcasts" onclick="launchAppWithSplash('calendar-app', 'icon-calendar', '캘린더')">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+            </div>
+        </div>
+
+        <!-- 전화 앱 화면 -->
+        <div id="phone-app" class="app-view">
+            <div class="app-header" style="background:#000; margin-bottom:0;">
+                <button class="back-btn" onclick="closeApp('phone-app')">&lt; 홈</button>
+                <span>전화</span>
+                <span style="width:30px"></span>
+            </div>
+            <div class="phone-nav-header">최근 통화</div>
+            <div class="phone-contact-list">
+                <div class="contact-item" onclick="alert('긴토키에게 발신 중...')">
+                    <div class="contact-info">
+                        <h4 style="color: #fff;">긴토키</h4>
+                        <p>휴대전화 통화 · 어제</p>
+                    </div>
+                    <span style="color: #007aff; font-size: 18px;">ℹ️</span>
+                </div>
+                <div class="contact-item" onclick="alert('콘도 이사오에게 발신 중...')">
+                    <div class="contact-info">
+                        <h4 style="color: #fff;">콘도 이사오</h4>
+                        <p>휴대전화 통화 · 3일 전</p>
+                    </div>
+                    <span style="color: #007aff; font-size: 18px;">ℹ️</span>
+                </div>
+                <div class="contact-item" onclick="alert('오키타 소고에게 발신 중...')">
+                    <div class="contact-info">
+                        <h4 style="color: #fff;">오키타 소고</h4>
+                        <p>부재중 전화 · 지난주</p>
+                    </div>
+                    <span style="color: #007aff; font-size: 18px;">ℹ️</span>
                 </div>
             </div>
         </div>
@@ -1021,7 +1166,7 @@
             </div>
         </div>
 
-        <!-- 앱 3: 인스타그램 프로필 화면 (참고 사진 3 스타일 반영) -->
+        <!-- 앱 3: 인스타그램 프로필 화면 -->
         <div id="insta-app" class="app-view">
             <div class="insta-nav-header">
                 <span>hijikata_toshi</span>
@@ -1064,7 +1209,6 @@
                 </div>
             </div>
 
-            <!-- 하단 인스타 네비게이션 바 (종이비행기 버튼으로 DM 목록 이동) -->
             <div class="insta-bottom-nav">
                 <span onclick="closeApp('insta-app')" style="cursor: pointer;">🏠</span>
                 <span onclick="alert('탐색 탭')" style="cursor: pointer;">🔍</span>
@@ -1074,7 +1218,7 @@
             </div>
         </div>
 
-        <!-- 인스타그램 DM 리스트 화면 (참고 사진 4 스타일) -->
+        <!-- 인스타그램 DM 리스트 화면 -->
         <div id="insta-dm-list">
             <div class="dm-list-header">
                 <button class="back-btn" onclick="closeInstaList()" style="font-size: 20px; color:#fff;">&lt;</button>
@@ -1085,15 +1229,13 @@
                 <input type="text" class="dm-search-input" placeholder="검색">
             </div>
             <div class="dm-items-container">
-                <!-- 긴토키 DM (다양한 날짜별 대화 포함) -->
                 <div class="dm-user-item" onclick="openInstaChat('gintoki')">
-                    <div class="dm-user-avatar"> 자연</div>
+                    <div class="dm-user-avatar">자연</div>
                     <div class="dm-user-info">
                         <h4>긴토키</h4>
-                        <p>야 히지카타 이번 주 일요일에 파르페 가게 갈래 · 2분 전</p>
+                        <p>음성 메시지 · 방금 전</p>
                     </div>
                 </div>
-                <!-- 여학생 후배 고백 DM -->
                 <div class="dm-user-item" onclick="openInstaChat('hana')">
                     <div class="dm-user-avatar">🌸</div>
                     <div class="dm-user-info">
@@ -1101,7 +1243,6 @@
                         <p>선배님 저 진짜 진심이에요 답장해주세요 · 1시간 전</p>
                     </div>
                 </div>
-                <!-- 오키타 소고 DM -->
                 <div class="dm-user-item" onclick="openInstaChat('sougo')">
                     <div class="dm-user-avatar">🗡️</div>
                     <div class="dm-user-info">
@@ -1110,7 +1251,6 @@
                     </div>
                 </div>
             </div>
-            <!-- 하단 바 -->
             <div class="insta-bottom-nav">
                 <span onclick="closeInstaList(); closeApp('insta-app')" style="cursor: pointer;">🏠</span>
                 <span onclick="alert('탐색')" style="cursor: pointer;">🔍</span>
@@ -1120,7 +1260,7 @@
             </div>
         </div>
 
-        <!-- 긴토키 인스타 DM 방 (4가지 날짜별 다양한 대화) -->
+        <!-- 긴토키 인스타 DM 방 -->
         <div id="insta-chat-gintoki" class="insta-dm-room">
             <div class="app-header" style="background:#000; margin-bottom:10px;">
                 <button class="back-btn" onclick="closeInstaChat('gintoki')">&lt;</button>
@@ -1128,27 +1268,38 @@
                 <span style="width:30px"></span>
             </div>
             <div class="chat-container">
-                <!-- 1번째 날짜: 9월 12일 -->
                 <div class="chat-date-header">9월 12일</div>
-                <div class="chat-bubble other">야 니가 사오라던거 매점에 마요네즈 빵 또 품절이더라</div>
-                <div class="chat-bubble me">내 알 바냐 네가 먼저 가서 미리 샀어야지</div>
-                <div class="chat-bubble other">아니 니가 늦게 말해놓고...ㅠ.ㅠ</div>
+                <div class="chat-bubble other">야 매점에 마요네즈 빵 또 품절이더라</div>
+                <div class="chat-bubble me">내 알 바냐 네가 먼저 가서 사먹었어야지</div>
+                <div class="chat-bubble other">사주면 안 되냐 고딩 토시로 선배님이 사주시면 더 맛있을 거 같은데</div>
 
-                <!-- 2번째 날짜: 9월 25일 -->
                 <div class="chat-date-header">9월 25일</div>
                 <div class="chat-bubble other">오늘 자습시간에 도서실에서 자는 거 다 봤다</div>
-                <div class="chat-bubble me">ㄴ 안 잤어 문제 풀고 있었거든</div>
+                <div class="chat-bubble me">자 안 잤거든 문제 풀고 있었거든</div>
                 <div class="chat-bubble other">턱 괴고 침 흘릴 기세던데 사진 찍을 걸 그랬네 귀엽더라</div>
                 <div class="chat-bubble me">지우개 던지기 전에 폰 집어넣어라</div>
 
-                <!-- 3번째 날짜: 10월 10일 -->
                 <div class="chat-date-header">10월 10일</div>
                 <div class="chat-bubble other">이번 주말에 영화 볼래 액션 말고 슬픈 거 말고 달달한 거</div>
                 <div class="chat-bubble me">네가 무슨 달달한 걸 본다고 그래</div>
                 <div class="chat-bubble other">너랑 보면 뭔들 안 달달하겠냐 같이 가자 데이트라고 치고</div>
                 <div class="chat-bubble me">말이나 못 하면 알았어 시간이나 정해라</div>
 
-                <!-- 4번째 날짜: 오늘 -->
+                <div class="chat-date-header">어제</div>
+                <div class="chat-bubble other">너는 진짜 내가 왜 좋냐 맨날 장난이나 치고</div>
+                <div class="chat-bubble me">글쎄 얼굴이 내 취향이라 그런가 아니면 그냥 너라는 사람이 좋은가</div>
+                <div class="chat-bubble other">갑자기 무슨 소리야 오글거리게 진지 떨지 마라</div>
+                <div class="chat-bubble me">진심인데 왜 믿지를 않냐 나도 네가 엄청 좋거든</div>
+                <div class="chat-bubble other">알았으니까 그만해라 나도 뭐 나쁘진 않다</div>
+                <div class="chat-bubble me">말로만 그러지 말고 목소리로 해줘봐</div>
+                <div class="chat-bubble other" style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="playVoiceMessage()">
+                    <div style="font-size: 18px; background: #0095f6; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: white;">▶</div>
+                    <div>
+                        <div style="font-size: 13px; font-weight: bold;">음성 메시지</div>
+                        <div style="font-size: 11px; color: #aaa;">0:05 · 터치하여 재생</div>
+                    </div>
+                </div>
+
                 <div class="chat-date-header">오늘</div>
                 <div class="chat-bubble other">야 히지카타 이번 주 일요일에 새로 생긴 파르페 가게 갈래</div>
                 <div class="chat-bubble other">거기 메뉴 중에 진한 마요네즈 얹은 극악무도한 디저트도 있다던데 이거 데이트 신청이니까</div>
@@ -1249,6 +1400,66 @@
     <script>
         let currentPin = "";
         const correctPin = "1005";
+        let callTimeout = null;
+        let callTimerInterval = null;
+
+        /* 웹사이트 접속 후 정확히 10초 뒤 전화 수신 팝업 표시 */
+        window.onload = function() {
+            setTimeout(() => {
+                const popup = document.getElementById('incoming-call-popup');
+                popup.classList.add('active');
+            }, 10000);
+        };
+
+        /* 전화 거절 버튼 */
+        function rejectCall() {
+            const popup = document.getElementById('incoming-call-popup');
+            popup.classList.remove('active');
+        }
+
+        /* 전화 받기 버튼 */
+        function acceptCall() {
+            const popup = document.getElementById('incoming-call-popup');
+            popup.classList.remove('active');
+
+            const callScreen = document.getElementById('active-call-screen');
+            callScreen.classList.add('active');
+
+            // 지정된 유튜브 링크 1분 2초(62초) ~ 1분 32초(92초) 재생 시작
+            const audioContainer = document.getElementById('audio-container');
+            audioContainer.innerHTML = `<iframe width="0" height="0" src="https://www.youtube.com/embed/8Pvv9vPJzwE?start=62&end=92&autoplay=1" frameborder="0" allow="autoplay"></iframe>`;
+
+            // 통화 시간 타이머 표시
+            let seconds = 0;
+            const timerText = document.getElementById('call-timer-text');
+            callTimerInterval = setInterval(() => {
+                seconds++;
+                let m = Math.floor(seconds / 60);
+                let s = seconds % 60;
+                timerText.innerText = `통화 중... 0${m}:${s < 10 ? '0' : ''}${s}`;
+            }, 1000);
+
+            // 재생 시간(30초) + 2초 침묵 = 총 32초(32000ms) 뒤에 자동 종료
+            callTimeout = setTimeout(() => {
+                endCall();
+            }, 32000);
+        }
+
+        /* 통화 종료 버튼 또는 자동 종료 시 */
+        function endCall() {
+            if(callTimeout) clearTimeout(callTimeout);
+            if(callTimerInterval) clearInterval(callTimerInterval);
+
+            // 통화 화면 닫기 및 팝업 확실히 제거, 오디오 중단
+            const callScreen = document.getElementById('active-call-screen');
+            callScreen.classList.remove('active');
+
+            const popup = document.getElementById('incoming-call-popup');
+            popup.classList.remove('active');
+
+            const audioContainer = document.getElementById('audio-container');
+            audioContainer.innerHTML = '';
+        }
 
         function showPasscodeScreen() {
             document.getElementById('lock-screen').style.transform = 'translateY(-100%)';
@@ -1326,6 +1537,8 @@
                 splashBox.innerHTML = `<svg width="45" height="45" viewBox="0 0 24 24" fill="#333"><path d="M3 3v18h18V3H3zm16 16H5V5h14v14zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg>`;
             } else if(appId === 'insta-app') {
                 splashBox.innerHTML = `<svg width="45" height="45" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`;
+            } else if(appId === 'phone-app') {
+                splashBox.innerHTML = `<svg width="45" height="45" viewBox="0 0 24 24" fill="white"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>`;
             } else {
                 splashBox.innerHTML = `<svg width="45" height="45" viewBox="0 0 24 24" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>`;
             }
@@ -1356,7 +1569,6 @@
             document.getElementById('chat-' + chatId).classList.remove('active');
         }
 
-        /* 인스타 DM 리스트 및 개별 채팅 제어 */
         function openInstaList() {
             document.getElementById('insta-dm-list').classList.add('active');
         }
@@ -1373,7 +1585,12 @@
             document.getElementById('insta-chat-' + chatName).classList.remove('active');
         }
 
-        /* 사파리 검색 기능 */
+        function playVoiceMessage() {
+            const container = document.getElementById('audio-container');
+            container.innerHTML = `<iframe width="0" height="0" src="https://www.youtube.com/embed/8Pvv9vPJzwE?start=97&end=102&autoplay=1" frameborder="0" allow="autoplay"></iframe>`;
+            alert("긴토키의 음성 메시지를 재생합니다!");
+        }
+
         function toggleSearchDropdown(event) {
             event.stopPropagation();
             const dropdown = document.getElementById('searchDropdown');
@@ -1392,17 +1609,17 @@
             
             if(query === '100일 선물') {
                 title.innerText = "학생 커플 기념일 선물 추천 - 100일 선물 베스트";
-                desc.innerText = "1. 커플 운동화 및 후드티\n2. 수제 편지 및 커플링 (이니셜 각인)\n3. 서로의 폴라로이드 사진이 담긴 미니앨범\n* 긴토키가 제일 좋아하는 건 사실 히지카타와 딸기 파르페 세트일지도 모름.";
+                desc.innerText = "1. 커플 운동화 및 후드티\n2. 수제 편지 및 커플링 (이니셜 각인)\n3. 서로의 폴라로이드 사진이 담긴 미니앨범\n* 긴토키가 제일 좋아하는 건 사실 마요네즈 대용량 세트일지도 모름.";
             } else if(query === '남자친구들이 좋아하는 행동') {
                 title.innerText = "츤데레 남친이 속으로 감동하는 행동 모음";
-                desc.innerText = "1. 툴툴거리면서도 은근히 챙겨줄 때\n2. 과하게 부끄러워하며 얼굴 빨개질 때\n3. 단둘이 있을 때 솔직하게 마음 표현해 줄 때";
+                desc.innerText = "1. 툴툴거리면서도 은근히 챙겨줄 때\n2. 과하게 부끄러워하며 얼굴 빨개질 때\n3. 단둘이 있을 때 솔직하게 마음 표현해 줄 때 (백야차 대만족)";
             } else if(query === '솔직해지는 법') {
                 title.innerText = "마음과 다르게 툴툴거리는 버릇 고치는 법";
-                desc.innerText = "상처받을까봐 방어적으로 말하는 당신! 상대방이 먼저 다가왔을 때 눈을 피하지 말고 솔직하게 대답해 보세요.";
+                desc.innerText = "상처받을까봐 방어적으로 말하는 당신! 상대방(특히 곱슬머리 긴토키)이 먼저 다가왔을 때 눈을 피하지 말고 솔직하게 대답해 보세요.";
             } else {
                 title.innerText = query + "에 대한 검색 결과";
-                desc.innerText = "관련 웹사이트 정보를 성공적으로 불러왔습니다. 마요네즈와 잘 어울리는 음식들을 만들어 곁들여 먹는 것도 좋은 방법압니다! 특히, 찬구들이나 애인애개 도시럭을 싸 줄 때 참치마요 주먹밥이나, 고추마요소스를 올린 후라이드 치킨을 많이 싸 주곤 합니다.";
-            
+                desc.innerText = "관련 웹사이트 정보를 성공적으로 불러왔습니다. 긴토키와 함께 행복한 고딩 생활을 즐겨보세요!";
+            }
         }
 
         window.onclick = function(event) {
