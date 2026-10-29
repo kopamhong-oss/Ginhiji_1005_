@@ -259,7 +259,7 @@
             animation: shake 0.4s ease-in-out;
         }
 
-        /* 2. 홈 화면 (참고 이미지 기반 테마 및 위젯 배치) */
+        /* 2. 홈 화면 */
         #home-screen {
             background: linear-gradient(135deg, #1b263b 0%, #111e38 40%, #0d1b2a 100%);
             color: white;
@@ -358,19 +358,14 @@
         .icon-messages { background: linear-gradient(135deg, #34c759, #28a745); }
         .icon-clock { background: #000; border: 2px solid #222; }
         .icon-maps { background: linear-gradient(135deg, #34c759, #007aff); }
-        .icon-weather { background: linear-gradient(135deg, #5ac8fa, #007aff); }
-        .icon-reminders { background: #ffffff; }
         .icon-memo { background: linear-gradient(135deg, #f39c12, #f1c40f); }
-        .icon-stocks { background: #000; }
-        .icon-books { background: linear-gradient(135deg, #ff9500, #ffcc00); }
         .icon-appstore { background: linear-gradient(135deg, #007aff, #5ac8fa); }
         .icon-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-        .icon-x { background: #000; border: 1px solid #333; }
 
         .cal-header { background: #ff3b30; width: 100%; height: 14px; color: white; font-size: 8px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
         .cal-body { font-size: 22px; font-weight: bold; color: #333; display: flex; align-items: center; justify-content: center; height: 44px; }
 
-        /* 하단 검색 바 (참고 이미지 스타일) 및 독 바 */
+        /* 하단 영역 (검색 바 + 페이지 점 3개 + 독 바) */
         .home-bottom-area {
             margin-top: auto;
             display: flex;
@@ -1129,14 +1124,14 @@
             </div>
         </div>
 
-        <!-- 2. 홈 화면 (참고 이미지 스타일 적용) -->
+        <!-- 2. 홈 화면 -->
         <div id="home-screen" class="screen">
             <div class="status-bar dark">
                 <span>10:05</span>
                 <span>U+ 5G 🔋 82%</span>
             </div>
 
-            <!-- 상단 위젯 영역 (날씨 위젯 + 유튜브 검색 위젯) -->
+            <!-- 상단 위젯 영역 -->
             <div class="widget-area">
                 <div class="ios-widget weather-widget" onclick="alert('도쿄/시부야 날씨: 맑음 18°C')">
                     <div class="w-top">
@@ -1197,7 +1192,7 @@
                 </div>
             </div>
 
-            <!-- 하단 영역 (검색 바 + 페이지 점 3개 + 독 바) -->
+            <!-- 하단 영역 -->
             <div class="home-bottom-area">
                 <div class="home-search-pill" onclick="launchAppWithSplash('safari-app', 'icon-appstore', 'Safari')">
                     <span>🔍</span> Search
@@ -1586,30 +1581,89 @@
         const correctPin = "1005";
         let callTimeout = null;
         let callTimerInterval = null;
+        
+        // 벨소리 관련 변수 (Web Audio API 사용)
+        let audioCtx = null;
+        let ringtoneTimer = null;
 
-        /* 웹사이트 접속 후 정확히 10초 뒤 전화 수신 팝업 표시 */
+        /* 웹사이트 접속 후 정확히 10초 뒤 전화 수신 팝업 및 벨소리 재생 */
         window.onload = function() {
             setTimeout(() => {
                 const popup = document.getElementById('incoming-call-popup');
                 popup.classList.add('active');
+                startRingtone(); // 전화벨 소리 시작
             }, 10000);
         };
 
+        /* 전화벨 소리 재생 함수 (Web Audio API 활용 - 별도 외부 파일 없이 작동) */
+        function startRingtone() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            
+            playRingPulse();
+            // 3초마다 벨소리 반복 재생
+            ringtoneTimer = setInterval(() => {
+                playRingPulse();
+            }, 3000);
+        }
+
+        function playRingPulse() {
+            if (!audioCtx) return;
+            try {
+                let now = audioCtx.currentTime;
+                let osc1 = audioCtx.createOscillator();
+                let osc2 = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+
+                // 전화벨 표준 주파수 (440Hz + 480Hz 조합)
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(440, now);
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(480, now);
+
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0); // 1초 동안 울림
+
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc1.start(now);
+                osc2.start(now);
+                osc1.stop(now + 1.0);
+                osc2.stop(now + 1.0);
+            } catch(e) {}
+        }
+
+        /* 벨소리 중지 함수 */
+        function stopRingtone() {
+            if (ringtoneTimer) {
+                clearInterval(ringtoneTimer);
+                ringtoneTimer = null;
+            }
+        }
+
         /* 전화 거절 버튼 */
         function rejectCall() {
+            stopRingtone(); // 벨소리 멈춤
             const popup = document.getElementById('incoming-call-popup');
             popup.classList.remove('active');
         }
 
         /* 전화 받기 버튼 */
         function acceptCall() {
+            stopRingtone(); // 벨소리 멈춤
             const popup = document.getElementById('incoming-call-popup');
             popup.classList.remove('active');
 
             const callScreen = document.getElementById('active-call-screen');
             callScreen.classList.add('active');
 
-            // 유튜브 링크 1분 2초(62초) ~ 1분 32초(92초) 재생 시작
+            // 지정된 유튜브 링크 통화 음성 재생 시작
             const audioContainer = document.getElementById('audio-container');
             audioContainer.innerHTML = `<iframe width="0" height="0" src="https://www.youtube.com/embed/8Pvv9vPJzwE?start=62&end=92&autoplay=1" frameborder="0" allow="autoplay"></iframe>`;
 
@@ -1628,8 +1682,9 @@
             }, 32000);
         }
 
-        /* 통화 종료 */
+        /* 통화 종료 버튼 또는 자동 종료 시 */
         function endCall() {
+            stopRingtone(); // 벨소리 멈춤 (혹시 모를 대비)
             if(callTimeout) clearTimeout(callTimeout);
             if(callTimerInterval) clearInterval(callTimerInterval);
 
