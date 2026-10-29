@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hijikata's Phone - Ginhiji High School AU</title>
-    <!-- 유튜브 IFrame Player API 로드 -->
-    <script src="https://www.youtube.com/iframe_api"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -499,7 +497,7 @@
             cursor: pointer;
         }
 
-        /* 메시지 목록 아이템 스타일 */
+        /* 메시지 목록 아이템 스타일 (클릭 가능하도록 시각적 효과 추가) */
         .chat-list-item {
             display: flex;
             align-items: center;
@@ -536,7 +534,7 @@
             max-width: 210px;
         }
 
-        /* 메시지 개별 채팅방 스타일 */
+        /* 메시지 개별 채팅방 스타일 (부드러운 슬라이드 업 애니메이션 추가) */
         .chat-room {
             position: absolute;
             top: 0;
@@ -944,8 +942,8 @@
 <body>
 
     <div class="phone-frame">
-        <!-- 유튜브 API를 이용한 오디오 제어용 숨김 플레이어 -->
-        <div id="youtube-audio-player" style="display:none;"></div>
+        <!-- 음성 재생용 유튜브 플레이어 컨테이너 -->
+        <div id="audio-container" style="display:none;"></div>
 
         <!-- 10초 후 상단 전화 수신 팝업 -->
         <div id="incoming-call-popup">
@@ -1441,7 +1439,7 @@
                 📌 오후 11:55 - 발표 대본 작성, ppt 수행자료 준비<br>
                 📌 화목 방과 후 스카 <br><br>
                 <b style="color: #e1306c;">[이번 주 일요일 일정]</b><br>
-                📌 오후 2:00 - 긴토키와 신상 파르페 가게 데이트 (곧 100일 인데 같이 서로 선물 사주기)
+                📌 오후 2:00 - 긴토키와 신상 파르페 가게 데이트 (곧 100일 이니까 같이 서로 선물 사주기)
             </div>
         </div>
 
@@ -1487,8 +1485,6 @@
         const correctPin = "1005";
         let callTimeout = null;
         let callTimerInterval = null;
-        let ytPlayer = null;
-        let muteTimers = [];
 
         /* 웹사이트 접속 후 정확히 10초 뒤 전화 수신 팝업 표시 */
         window.onload = function() {
@@ -1498,27 +1494,13 @@
             }, 10000);
         };
 
-        /* 유튜브 IFrame API 준비 완료 시 호출 */
-        function onYouTubeIframeAPIReady() {
-            ytPlayer = new YT.Player('youtube-audio-player', {
-                height: '0',
-                width: '0',
-                videoId: '8Pvv9vPJzwE',
-                playerVars: {
-                    'start': 62,
-                    'end': 92,
-                    'autoplay': 0
-                }
-            });
-        }
-
         /* 전화 거절 버튼 */
         function rejectCall() {
             const popup = document.getElementById('incoming-call-popup');
             popup.classList.remove('active');
         }
 
-        /* 전화 받기 버튼 (유튜브 API로 특정 구간 소리 제어 및 1분19~20초, 1분31~32초 음소거 처리) */
+        /* 전화 받기 버튼 */
         function acceptCall() {
             const popup = document.getElementById('incoming-call-popup');
             popup.classList.remove('active');
@@ -1526,21 +1508,9 @@
             const callScreen = document.getElementById('active-call-screen');
             callScreen.classList.add('active');
 
-            // 유튜브 플레이어 재생 및 처음(62초)으로 시크
-            if(ytPlayer && typeof ytPlayer.seekTo === 'function') {
-                ytPlayer.seekTo(62);
-                ytPlayer.unMute();
-                ytPlayer.playVideo();
-            }
-
-            // 요청하신 특정 구간 소리 제거(음소거) 타이머 설정
-            // 1) 1분 19초 ~ 1분 20초 (영상 기준 79초 ~ 80초) -> 17초~18초 경과 시점
-            muteTimers.push(setTimeout(() => { if(ytPlayer && ytPlayer.mute) ytPlayer.mute(); }, 17000));
-            muteTimers.push(setTimeout(() => { if(ytPlayer && ytPlayer.unMute) ytPlayer.unMute(); }, 18000));
-
-            // 2) 1분 31초 ~ 1분 32초 (영상 기준 91초 ~ 92초) -> 29초~30초 경과 시점
-            muteTimers.push(setTimeout(() => { if(ytPlayer && ytPlayer.mute) ytPlayer.mute(); }, 29000));
-            muteTimers.push(setTimeout(() => { if(ytPlayer && ytPlayer.unMute) ytPlayer.unMute(); }, 30000));
+            // 지정된 유튜브 링크 1분 2초(62초) ~ 1분 32초(92초) 재생 시작
+            const audioContainer = document.getElementById('audio-container');
+            audioContainer.innerHTML = `<iframe width="0" height="0" src="https://www.youtube.com/embed/8Pvv9vPJzwE?start=62&end=92&autoplay=1" frameborder="0" allow="autoplay"></iframe>`;
 
             // 통화 시간 타이머 표시
             let seconds = 0;
@@ -1562,18 +1532,16 @@
         function endCall() {
             if(callTimeout) clearTimeout(callTimeout);
             if(callTimerInterval) clearInterval(callTimerInterval);
-            muteTimers.forEach(t => clearTimeout(t));
-            muteTimers = [];
 
-            if(ytPlayer && typeof ytPlayer.stopVideo === 'function') {
-                ytPlayer.stopVideo();
-            }
-
+            // 통화 화면 닫기 및 팝업 확실히 제거, 오디오 중단
             const callScreen = document.getElementById('active-call-screen');
             callScreen.classList.remove('active');
 
             const popup = document.getElementById('incoming-call-popup');
             popup.classList.remove('active');
+
+            const audioContainer = document.getElementById('audio-container');
+            audioContainer.innerHTML = '';
         }
 
         function showPasscodeScreen() {
